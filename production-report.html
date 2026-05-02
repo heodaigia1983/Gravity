@@ -108,8 +108,10 @@
         </div>
         <ul class="nav-menu">
             <li class="nav-item active" onclick="switchTab('tab-tongquan', this)"><i class='bx bx-tachometer'></i> 1. TỔNG QUAN</li>
-            <li class="nav-item" onclick="switchTab('tab-tiendo', this)"><i class='bx bx-line-chart'></i> 2. TIẾN ĐỘ & BIỂU ĐỒ</li>
-            <li class="nav-item" onclick="switchTab('tab-data', this)"><i class='bx bx-table'></i> 3. BẢNG DỮ LIỆU</li>
+            <li class="nav-item" onclick="switchTab('tab-tiendo', this)"><i class='bx bx-line-chart'></i> 2. TIẾN ĐỘ</li>
+            <li class="nav-item" onclick="switchTab('tab-khoiluong', this)"><i class='bx bx-cube-alt'></i> 3. KHỐI LƯỢNG</li>
+            <li class="nav-item" onclick="switchTab('tab-ngansach', this)"><i class='bx bx-money'></i> 4. NGÂN SÁCH</li>
+            <li class="nav-item" onclick="switchTab('tab-nhansu', this)"><i class='bx bx-group'></i> 5. NHÂN SỰ</li>
         </ul>
         <div class="sidebar-footer">
             <div id="update-time">Cập nhật: --/--/----</div>
@@ -197,19 +199,10 @@
                         <canvas id="sCurveChart"></canvas>
                     </div>
                 </div>
-                <div class="chart-card">
-                    <div class="card-header">
-                        <i class='bx bx-group'></i>
-                        <div class="card-title">BIỂU ĐỒ NHÂN LỰC THEO KẾ HOẠCH TỪNG THÁNG</div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="manpowerChart"></canvas>
-                    </div>
-                </div>
             </div>
 
-            <!-- TAB 3: BẢNG DỮ LIỆU -->
-            <div id="tab-data" class="tab-content">
+            <!-- TAB 3: KHỐI LƯỢNG -->
+            <div id="tab-khoiluong" class="tab-content">
                 <div class="table-card">
                     <div class="card-header" style="padding: 20px 20px 0; border: none;">
                         <i class='bx bx-list-ul'></i>
@@ -237,11 +230,33 @@
                 </div>
             </div>
 
+            <!-- TAB 4: NGÂN SÁCH -->
+            <div id="tab-ngansach" class="tab-content">
+                <div class="chart-card" style="text-align: center; padding: 50px;">
+                    <i class='bx bx-money' style="font-size: 48px; color: #ccc;"></i>
+                    <h3 style="margin-top: 15px; color: #666;">Chưa có dữ liệu Ngân sách</h3>
+                    <p style="color: #999; font-size: 14px; margin-top: 5px;">Dữ liệu ngân sách hiện tại chưa được cập nhật từ hệ thống.</p>
+                </div>
+            </div>
+
+            <!-- TAB 5: NHÂN SỰ -->
+            <div id="tab-nhansu" class="tab-content">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <i class='bx bx-group'></i>
+                        <div class="card-title">BIỂU ĐỒ NHÂN LỰC THEO KẾ HOẠCH TỪNG THÁNG</div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="manpowerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </main>
 
     <script>
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1sYzqK9XvQcc0wDTETLheHGnGKZAojanrbH0-hoNSzms/export?format=csv';
+        const SHEET_CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/1sYzqK9XvQcc0wDTETLheHGnGKZAojanrbH0-hoNSzms/export?format=csv');
 
         let rawData = [];
         let filteredData = [];
