@@ -11,107 +11,165 @@
     
     <style>
         :root {
-            --primary: #c8102e;
-            --primary-dark: #991b1b;
-            --bg-color: #f4f6f9;
-            --text-color: #333;
+            --primary: #e11d48; /* Modern Rose Red */
+            --primary-light: #fff1f2;
+            --secondary: #3b82f6; /* Modern Blue */
+            --bg-color: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
             --card-bg: #ffffff;
-            --border-color: #e5e7eb;
-            --success: #16a34a;
-            --warning: #ca8a04;
-            --danger: #dc2626;
-            --blue: #2563eb;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --radius-md: 12px;
+            --radius-lg: 16px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
 
         /* Loader */
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f1f5f9; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Sidebar */
-        .sidebar { width: 260px; background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; display: flex; flex-direction: column; box-shadow: 4px 0 15px rgba(0,0,0,0.1); z-index: 10; }
-        .logo-area { padding: 25px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .logo-box { background: white; color: var(--primary); font-size: 28px; font-weight: 800; width: 60px; height: 60px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .logo-title { font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-        .logo-subtitle { font-size: 11px; opacity: 0.8; margin-top: 5px; }
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: #cbd5e1; display: flex; flex-direction: column; z-index: 10; transition: all 0.3s ease; }
+        .logo-area { padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .logo-box { background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); color: white; font-size: 24px; font-weight: 800; width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; border-radius: 14px; box-shadow: 0 8px 16px rgba(225, 29, 72, 0.25); margin-bottom: 15px; }
+        .logo-title { font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #f8fafc; text-transform: uppercase; }
+        .logo-subtitle { font-size: 11px; color: #94a3b8; margin-top: 4px; font-weight: 500; }
 
-        .nav-menu { list-style: none; padding: 20px 0; flex: 1; }
-        .nav-item { padding: 15px 25px; display: flex; align-items: center; cursor: pointer; transition: all 0.3s; font-size: 14px; font-weight: 500; border-left: 4px solid transparent; }
-        .nav-item:hover { background: rgba(255,255,255,0.1); }
-        .nav-item.active { background: rgba(255,255,255,0.15); border-left-color: white; font-weight: 700; }
-        .nav-item i { margin-right: 12px; font-size: 20px; }
-        .sidebar-footer { padding: 20px; font-size: 11px; opacity: 0.7; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); }
+        .nav-menu { list-style: none; padding: 20px 15px; flex: 1; }
+        .nav-item { padding: 12px 15px; display: flex; align-items: center; cursor: pointer; transition: all 0.2s ease; font-size: 14px; font-weight: 500; border-radius: 10px; margin-bottom: 5px; color: #94a3b8; }
+        .nav-item:hover { background: var(--sidebar-hover); color: #f8fafc; }
+        .nav-item.active { background: rgba(225, 29, 72, 0.1); color: #e11d48; font-weight: 600; }
+        .nav-item.active i { color: #e11d48; }
+        .nav-item i { margin-right: 12px; font-size: 20px; transition: color 0.2s; }
+        
+        .sidebar-footer { padding: 20px; font-size: 12px; color: #64748b; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
 
         /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-        .topbar { background: var(--card-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 5; }
-        .page-title { color: var(--primary); font-size: 20px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-        .filters select { padding: 8px 15px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; font-family: inherit; color: var(--text-color); background: var(--bg-color); cursor: pointer; margin-left: 10px; font-weight: 600; }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; scroll-behavior: smooth; }
+        
+        /* Custom Scrollbar */
+        .main-content::-webkit-scrollbar { width: 8px; }
+        .main-content::-webkit-scrollbar-track { background: transparent; }
+        .main-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .main-content::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .dashboard-container { padding: 25px 30px; }
+        .topbar { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); padding: 15px 35px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--border-color); }
+        .page-title { color: var(--text-main); font-size: 18px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 12px; }
+        .badge-company { font-size: 11px; background: var(--primary-light); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-weight: 600; letter-spacing: 0.5px; }
+        
+        .filters { display: flex; gap: 12px; }
+        .filters select { padding: 9px 16px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-family: inherit; color: var(--text-main); background: var(--card-bg); cursor: pointer; font-weight: 500; font-size: 13px; transition: border-color 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-sm); appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+        .filters select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+        .dashboard-container { padding: 30px 35px; max-width: 1600px; margin: 0 auto; width: 100%; }
 
         /* Tabs */
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content { display: none; animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: translateY(15px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         /* KPIs */
-        .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 25px; }
-        .kpi-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-top: 4px solid var(--primary); transition: transform 0.3s; position: relative; overflow: hidden; }
-        .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-        .kpi-title { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; margin-bottom: 10px; }
-        .kpi-value { font-size: 28px; font-weight: 800; color: var(--primary); margin-bottom: 5px; }
-        .kpi-sub { font-size: 12px; color: #9ca3af; }
-        .kpi-card.blue { border-top-color: var(--blue); } .kpi-card.blue .kpi-value { color: var(--blue); }
-        .kpi-card.green { border-top-color: var(--success); } .kpi-card.green .kpi-value { color: var(--success); }
-        .kpi-card.orange { border-top-color: var(--warning); } .kpi-card.orange .kpi-value { color: var(--warning); }
+        .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: var(--card-bg); padding: 22px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 16px; transition: transform 0.2s, box-shadow 0.2s; }
+        .kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: #cbd5e1; }
+        
+        .kpi-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+        .kpi-icon.rose { background: var(--primary-light); color: var(--primary); }
+        .kpi-icon.emerald { background: var(--success-light); color: var(--success); }
+        .kpi-icon.amber { background: var(--warning-light); color: var(--warning); }
+        .kpi-icon.blue { background: #dbeafe; color: var(--secondary); }
+        .kpi-icon.slate { background: #f1f5f9; color: #475569; }
+
+        .kpi-info { flex: 1; }
+        .kpi-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .kpi-value { font-size: 26px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 4px; }
+        .kpi-value small { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+        .kpi-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .kpi-sub span { font-weight: 600; color: var(--text-main); }
 
         /* Charts */
-        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
-        .chart-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; }
-        .card-header { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
-        .card-header i { color: var(--primary); font-size: 18px; margin-right: 10px; }
-        .card-title { font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; }
-        .chart-wrapper { position: relative; height: 350px; width: 100%; }
-        .chart-wrapper.large { height: 400px; }
+        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .chart-card { background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .card-header-left { display: flex; align-items: center; gap: 10px; }
+        .card-icon { width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; color: var(--text-main); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .card-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .chart-wrapper { position: relative; height: 320px; width: 100%; }
+        .chart-wrapper.large { height: 420px; }
 
         /* Table */
-        .table-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
-        .table-responsive { width: 100%; overflow-x: auto; padding: 0 20px 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
-        th { background: var(--primary); color: white; font-weight: 600; text-transform: uppercase; position: sticky; top: 0; z-index: 2; }
-        tr:nth-child(even) { background-color: #f9fafb; }
-        tr:hover { background-color: #f3f4f6; }
-        .text-right { text-align: right; } .text-center { text-align: center; } .font-bold { font-weight: 700; }
-        .progress-container { width: 100%; background-color: #e5e7eb; border-radius: 4px; height: 6px; margin-top: 5px; }
-        .progress-bar { height: 6px; border-radius: 4px; background-color: var(--primary); }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-        .bg-success { background: #dcfce7; color: #166534; } .bg-warning { background: #fef08a; color: #854d0e; } .bg-gray { background: #f3f4f6; color: #4b5563; }
+        .table-card { background: var(--card-bg); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); overflow: hidden; }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        th, td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        th { background: #f8fafc; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2; border-bottom: 2px solid var(--border-color); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #f8fafc; }
+        .text-right { text-align: right; } .text-center { text-align: center; } 
+        .font-bold { font-weight: 600; color: var(--text-main); }
+        
+        /* Progress in table */
+        .progress-cell { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+        .progress-text { font-weight: 600; font-size: 12px; color: var(--text-main); }
+        .progress-container { width: 80px; background-color: #f1f5f9; border-radius: 999px; height: 6px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 999px; background-color: var(--secondary); transition: width 0.5s ease; }
+        
+        /* Badges */
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; display: inline-flex; align-items: center; justify-content: center; }
+        .bg-success { background: var(--success-light); color: #065f46; } 
+        .bg-warning { background: var(--warning-light); color: #92400e; } 
+        .bg-gray { background: #f1f5f9; color: #475569; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-icon { font-size: 64px; color: #cbd5e1; margin-bottom: 16px; }
+        .empty-title { font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+        .empty-desc { font-size: 14px; color: var(--text-muted); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); position: fixed; height: 100%; }
+            .kpi-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <div class="spinner"></div>
-        <h3 style="color: var(--primary);">Đang tải & xử lý dữ liệu...</h3>
+        <h3 style="color: var(--text-main); font-weight: 600; font-size: 16px;">Đang xử lý dữ liệu...</h3>
     </div>
 
     <aside class="sidebar">
         <div class="logo-area">
-            <div class="logo-box">ĐD</div>
+            <div class="logo-box">ĐĐ</div>
             <div class="logo-title">BÁO CÁO TIẾN ĐỘ</div>
             <div class="logo-subtitle">Phát hành Shop</div>
         </div>
         <ul class="nav-menu">
-            <li class="nav-item active" onclick="switchTab('tab-tongquan', this)"><i class='bx bx-tachometer'></i> 1. TỔNG QUAN</li>
-            <li class="nav-item" onclick="switchTab('tab-tiendo', this)"><i class='bx bx-line-chart'></i> 2. TIẾN ĐỘ</li>
-            <li class="nav-item" onclick="switchTab('tab-khoiluong', this)"><i class='bx bx-cube-alt'></i> 3. KHỐI LƯỢNG</li>
-            <li class="nav-item" onclick="switchTab('tab-ngansach', this)"><i class='bx bx-money'></i> 4. NGÂN SÁCH</li>
-            <li class="nav-item" onclick="switchTab('tab-nhansu', this)"><i class='bx bx-group'></i> 5. NHÂN SỰ</li>
+            <li class="nav-item active" onclick="switchTab('tab-tongquan', this)"><i class='bx bx-category'></i> Tổng Quan</li>
+            <li class="nav-item" onclick="switchTab('tab-tiendo', this)"><i class='bx bx-trending-up'></i> Tiến Độ S-Curve</li>
+            <li class="nav-item" onclick="switchTab('tab-khoiluong', this)"><i class='bx bx-table'></i> Khối Lượng Chi Tiết</li>
+            <li class="nav-item" onclick="switchTab('tab-ngansach', this)"><i class='bx bx-wallet'></i> Ngân Sách</li>
+            <li class="nav-item" onclick="switchTab('tab-nhansu', this)"><i class='bx bx-group'></i> Nhân Sự</li>
         </ul>
         <div class="sidebar-footer">
             <div id="update-time">Cập nhật: --/--/----</div>
@@ -121,7 +179,8 @@
     <main class="main-content">
         <header class="topbar">
             <div class="page-title">
-                DASHBOARD PHÁT HÀNH SHOP <span style="font-size: 12px; color: #6b7280; font-weight: 500; margin-left: 10px;">Đại Dũng — Kết cấu thép</span>
+                Dashboard Phát Hành Shop
+                <span class="badge-company">Đại Dũng KCT</span>
             </div>
             <div class="filters">
                 <select id="filter-shop"><option value="All">Tất cả Shop</option></select>
@@ -138,29 +197,44 @@
             <!-- KPIs -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-title">KL PHÂN BỔ</div>
-                    <div class="kpi-value" id="kpi-phanbo">0</div>
-                    <div class="kpi-sub">tấn - <span id="kpi-count">0</span> DA</div>
-                </div>
-                <div class="kpi-card green">
-                    <div class="kpi-title">KL ĐÃ PHÁT HÀNH</div>
-                    <div class="kpi-value" id="kpi-phathanh">0</div>
-                    <div class="kpi-sub"><span id="kpi-phathanh-percent">0</span>% hoàn thành</div>
-                </div>
-                <div class="kpi-card orange">
-                    <div class="kpi-title">KL CÒN LẠI</div>
-                    <div class="kpi-value" id="kpi-conlai">0</div>
-                    <div class="kpi-sub">tấn cần thực hiện</div>
-                </div>
-                <div class="kpi-card blue">
-                    <div class="kpi-title">TỔNG NHÂN LỰC</div>
-                    <div class="kpi-value" id="kpi-nhanluc">0</div>
-                    <div class="kpi-sub">người / tháng</div>
+                    <div class="kpi-icon rose"><i class='bx bx-layer'></i></div>
+                    <div class="kpi-info">
+                        <div class="kpi-title">KL Phân Bổ</div>
+                        <div class="kpi-value" id="kpi-phanbo">0</div>
+                        <div class="kpi-sub">Từ <span id="kpi-count">0</span> dự án</div>
+                    </div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-title">TRẠNG THÁI DỰ ÁN</div>
-                    <div class="kpi-value" style="font-size: 24px;"><span id="kpi-active" style="color: var(--primary);">0</span> <span style="color: #ccc; font-size: 20px;">/</span> <span id="kpi-done" style="color: var(--success);">0</span></div>
-                    <div class="kpi-sub">Đang triển khai / Đã xong</div>
+                    <div class="kpi-icon emerald"><i class='bx bx-check-shield'></i></div>
+                    <div class="kpi-info">
+                        <div class="kpi-title">KL Đã Phát Hành</div>
+                        <div class="kpi-value" id="kpi-phathanh">0</div>
+                        <div class="kpi-sub">Đạt <span id="kpi-phathanh-percent">0</span>% hoàn thành</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon amber"><i class='bx bx-time-five'></i></div>
+                    <div class="kpi-info">
+                        <div class="kpi-title">KL Còn Lại</div>
+                        <div class="kpi-value" id="kpi-conlai">0</div>
+                        <div class="kpi-sub">Tấn cần thực hiện</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon blue"><i class='bx bx-user-circle'></i></div>
+                    <div class="kpi-info">
+                        <div class="kpi-title">Tổng Nhân Lực</div>
+                        <div class="kpi-value" id="kpi-nhanluc">0</div>
+                        <div class="kpi-sub">Người / Tháng</div>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon slate"><i class='bx bx-stats'></i></div>
+                    <div class="kpi-info">
+                        <div class="kpi-title">Trạng Thái DA</div>
+                        <div class="kpi-value"><span id="kpi-active" style="color: var(--primary);">0</span><small>/</small><span id="kpi-done" style="color: var(--success);">0</span></div>
+                        <div class="kpi-sub">Đang triển khai / Đã xong</div>
+                    </div>
                 </div>
             </div>
 
@@ -169,8 +243,10 @@
                 <div class="charts-grid">
                     <div class="chart-card">
                         <div class="card-header">
-                            <i class='bx bx-bar-chart-square'></i>
-                            <div class="card-title">TỔNG QUAN PHÁT HÀNH SHOP (TẤN)</div>
+                            <div class="card-header-left">
+                                <div class="card-icon"><i class='bx bx-bar-chart'></i></div>
+                                <div class="card-title">Khối lượng phát hành các Shop</div>
+                            </div>
                         </div>
                         <div class="chart-wrapper">
                             <canvas id="barChart"></canvas>
@@ -178,8 +254,10 @@
                     </div>
                     <div class="chart-card">
                         <div class="card-header">
-                            <i class='bx bx-pie-chart-alt-2'></i>
-                            <div class="card-title">TỶ LỆ PHÂN BỔ SHOP (%)</div>
+                            <div class="card-header-left">
+                                <div class="card-icon"><i class='bx bx-pie-chart-alt'></i></div>
+                                <div class="card-title">Tỷ lệ phân bổ</div>
+                            </div>
                         </div>
                         <div class="chart-wrapper">
                             <canvas id="pieChart"></canvas>
@@ -192,8 +270,10 @@
             <div id="tab-tiendo" class="tab-content">
                 <div class="chart-card">
                     <div class="card-header">
-                        <i class='bx bx-line-chart'></i>
-                        <div class="card-title">S-CURVE TỔNG THỂ — PLAN % VS ACTUAL % & KHỐI LƯỢNG THÁNG</div>
+                        <div class="card-header-left">
+                            <div class="card-icon"><i class='bx bx-line-chart'></i></div>
+                            <div class="card-title">S-Curve Tổng Thể (Plan vs Actual)</div>
+                        </div>
                     </div>
                     <div class="chart-wrapper large">
                         <canvas id="sCurveChart"></canvas>
@@ -204,24 +284,26 @@
             <!-- TAB 3: KHỐI LƯỢNG -->
             <div id="tab-khoiluong" class="tab-content">
                 <div class="table-card">
-                    <div class="card-header" style="padding: 20px 20px 0; border: none;">
-                        <i class='bx bx-list-ul'></i>
-                        <div class="card-title">BẢNG CHI TIẾT DỰ ÁN — TIẾN ĐỘ & CẢNH BÁO</div>
+                    <div class="card-header" style="padding: 24px 24px 0; border: none; margin-bottom: 10px;">
+                        <div class="card-header-left">
+                            <div class="card-icon"><i class='bx bx-list-ul'></i></div>
+                            <div class="card-title">Chi Tiết Dự Án & Cảnh Báo</div>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <table id="project-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>MÃ DA</th>
-                                    <th>TÊN DỰ ÁN</th>
-                                    <th>HẠNG MỤC</th>
-                                    <th>SHOP</th>
-                                    <th class="text-right">KL PHÂN BỔ</th>
-                                    <th class="text-right">KL ĐÃ PH</th>
-                                    <th class="text-right">CÒN LẠI</th>
-                                    <th class="text-center">% HT</th>
-                                    <th class="text-center">TRẠNG THÁI</th>
+                                    <th>STT</th>
+                                    <th>Mã DA</th>
+                                    <th>Tên Dự Án</th>
+                                    <th>Hạng Mục</th>
+                                    <th>Shop</th>
+                                    <th class="text-right">KL Phân Bổ</th>
+                                    <th class="text-right">Đã PH</th>
+                                    <th class="text-right">Còn Lại</th>
+                                    <th class="text-center">Tiến Độ</th>
+                                    <th class="text-center">Trạng Thái</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -232,10 +314,10 @@
 
             <!-- TAB 4: NGÂN SÁCH -->
             <div id="tab-ngansach" class="tab-content">
-                <div class="chart-card" style="text-align: center; padding: 50px;">
-                    <i class='bx bx-money' style="font-size: 48px; color: #ccc;"></i>
-                    <h3 style="margin-top: 15px; color: #666;">Chưa có dữ liệu Ngân sách</h3>
-                    <p style="color: #999; font-size: 14px; margin-top: 5px;">Dữ liệu ngân sách hiện tại chưa được cập nhật từ hệ thống.</p>
+                <div class="chart-card empty-state">
+                    <i class='bx bx-wallet empty-icon'></i>
+                    <div class="empty-title">Chưa có dữ liệu Ngân sách</div>
+                    <div class="empty-desc">Dữ liệu ngân sách hiện tại chưa được cập nhật từ hệ thống quản trị.</div>
                 </div>
             </div>
 
@@ -243,8 +325,10 @@
             <div id="tab-nhansu" class="tab-content">
                 <div class="chart-card">
                     <div class="card-header">
-                        <i class='bx bx-group'></i>
-                        <div class="card-title">BIỂU ĐỒ NHÂN LỰC THEO KẾ HOẠCH TỪNG THÁNG</div>
+                        <div class="card-header-left">
+                            <div class="card-icon"><i class='bx bx-group'></i></div>
+                            <div class="card-title">Biểu đồ nhân lực theo tháng</div>
+                        </div>
                     </div>
                     <div class="chart-wrapper">
                         <canvas id="manpowerChart"></canvas>
@@ -258,18 +342,26 @@
     <script>
         const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1sYzqK9XvQcc0wDTETLheHGnGKZAojanrbH0-hoNSzms/export?format=csv';
 
+        // Setup Global Chart defaults for premium look
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.scale.grid.color = '#f1f5f9';
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(15, 23, 42, 0.9)';
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
+        Chart.defaults.plugins.tooltip.titleFont = { size: 13, weight: 'bold' };
+        Chart.defaults.plugins.tooltip.bodyFont = { size: 12 };
+
         let rawData = [];
         let filteredData = [];
         let shopList = new Set();
         
-        // Chart instances
         let barChartInst = null;
         let pieChartInst = null;
         let sCurveChartInst = null;
         let manpowerChartInst = null;
 
-        // Data indices for monthly metrics
-        let planIdx = 28, remainIdx = 54, manIdx = 41; // Fallbacks
+        let planIdx = 28, remainIdx = 54, manIdx = 41;
         const monthsLabel = ['Th10/25','Th11/25','Th12/25','Th01/26','Th02/26','Th03/26','Th04/26','Th05/26','Th06/26','Th07/26','Th08/26','Th09/26'];
 
         const parseNum = (str) => {
@@ -291,7 +383,6 @@
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             element.classList.add('active');
             
-            // Trigger chart resize
             window.dispatchEvent(new Event('resize'));
         }
 
@@ -303,7 +394,7 @@
                     processData(results.data);
                     document.getElementById('loader').style.display = 'none';
                     const now = new Date();
-                    document.getElementById('update-time').innerText = `Cập nhật: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN')}`;
+                    document.getElementById('update-time').innerText = `Cập nhật: ${now.toLocaleTimeString('vi-VN')} - ${now.toLocaleDateString('vi-VN')}`;
                 } catch (error) {
                     console.error("Error processing data:", error);
                     alert("Có lỗi xảy ra khi xử lý dữ liệu.");
@@ -313,7 +404,6 @@
         });
 
         function processData(data) {
-            // Find Headers for Monthly Data
             for (let i = 0; i < Math.min(30, data.length); i++) {
                 if (data[i]) {
                     let rowStr = data[i].join('');
@@ -409,14 +499,28 @@
                 
                 let badge = item.status.toLowerCase().includes('hoàn thành') ? '<span class="badge bg-success">Hoàn thành</span>' : 
                             (item.status.toLowerCase().includes('đang triển khai') ? '<span class="badge bg-warning">Đang khai</span>' : '<span class="badge bg-gray">Chưa ký</span>');
+                
+                // Colorize progress bar based on percentage
+                let pgColor = percent >= 90 ? 'var(--success)' : (percent >= 50 ? 'var(--secondary)' : 'var(--warning)');
 
                 let tr = document.createElement('tr');
-                tr.innerHTML = `<td>${index + 1}</td><td class="font-bold">${item.id}</td>
-                    <td><div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis;">${item.name}</div></td>
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted);">${index + 1}</td>
+                    <td class="font-bold">${item.id}</td>
+                    <td><div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;" title="${item.name}">${item.name}</div></td>
                     <td><div style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">${item.category}</div></td>
-                    <td>${item.shop}</td><td class="text-right font-bold" style="color: var(--primary);">${formatNum(item.klPhanBo)}</td>
-                    <td class="text-right">${formatNum(item.klPhatHanh)}</td><td class="text-right">${formatNum(item.klConLai)}</td>
-                    <td class="text-center"><div>${percent}%</div><div class="progress-container"><div class="progress-bar" style="width: ${percent}%;"></div></div></td>
+                    <td style="font-weight: 500;">${item.shop}</td>
+                    <td class="text-right font-bold" style="color: var(--text-main);">${formatNum(item.klPhanBo)}</td>
+                    <td class="text-right" style="color: var(--success); font-weight: 500;">${formatNum(item.klPhatHanh)}</td>
+                    <td class="text-right" style="color: var(--warning); font-weight: 500;">${formatNum(item.klConLai)}</td>
+                    <td class="text-center">
+                        <div class="progress-cell">
+                            <span class="progress-text">${percent}%</span>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${percent}%; background-color: ${pgColor};"></div>
+                            </div>
+                        </div>
+                    </td>
                     <td class="text-center">${badge}</td>`;
                 tbody.appendChild(tr);
             });
@@ -441,18 +545,38 @@
             barChartInst = new Chart(document.getElementById('barChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels: labels, datasets: [
-                    { label: 'KL Phân bổ', data: dataPhanBo, backgroundColor: '#2563eb', borderRadius: 4 },
-                    { label: 'KL Phát hành', data: dataPhatHanh, backgroundColor: '#16a34a', borderRadius: 4 },
-                    { label: 'KL Còn lại', data: dataConLai, backgroundColor: '#ea580c', borderRadius: 4 }
+                    { label: 'Phân bổ', data: dataPhanBo, backgroundColor: '#3b82f6', borderRadius: 6, barPercentage: 0.7 },
+                    { label: 'Phát hành', data: dataPhatHanh, backgroundColor: '#10b981', borderRadius: 6, barPercentage: 0.7 },
+                    { label: 'Còn lại', data: dataConLai, backgroundColor: '#f59e0b', borderRadius: 6, barPercentage: 0.7 }
                 ]},
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } } }, scales: { y: { beginAtZero: true, grid: { borderDash: [2, 4] } }, x: { grid: { display: false } } } }
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 10, padding: 20, font: { weight: '600' } } } }, 
+                    scales: { 
+                        y: { beginAtZero: true, border: { display: false }, grid: { color: '#f1f5f9', drawTicks: false } }, 
+                        x: { border: { display: false }, grid: { display: false } } 
+                    } 
+                }
             });
 
             if (pieChartInst) pieChartInst.destroy();
             pieChartInst = new Chart(document.getElementById('pieChart').getContext('2d'), {
                 type: 'doughnut',
-                data: { labels: labels, datasets: [{ data: dataPhanBo, backgroundColor: ['#dc2626', '#2563eb', '#db2777', '#9333ea', '#ea580c', '#0d9488', '#64748b'], borderWidth: 2, borderColor: '#fff' }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, font: {size: 11} } } } }
+                data: { 
+                    labels: labels, 
+                    datasets: [{ 
+                        data: dataPhanBo, 
+                        backgroundColor: ['#e11d48', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#64748b'], 
+                        borderWidth: 3, borderColor: '#ffffff',
+                        hoverOffset: 4
+                    }] 
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, cutout: '70%', 
+                    plugins: { 
+                        legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 10, padding: 16, font: { weight: '500' } } } 
+                    } 
+                }
             });
         }
 
@@ -466,20 +590,15 @@
                 for(let i=0; i<12; i++) {
                     planVol[i] += parseNum(raw[planIdx + i]);
                     manPower[i] += parseNum(raw[manIdx + i]);
-                    // If remain value is missing or 0 for future months, it will be 0 here.
                     let rVal = parseNum(raw[remainIdx + i]);
                     if (raw[remainIdx + i] === undefined || raw[remainIdx + i].trim() === '' || raw[remainIdx + i].trim() === '-') {
-                        // Inherit from previous month if available, else keep total remaining
                         rVal = i > 0 ? remainVol[i-1] : item.klConLai; 
                     }
                     remainVol[i] += rVal;
                 }
             });
 
-            let totalPlan = planVol.reduce((a, b) => a + b, 0) || 1; 
-            // Real Total from summary
             let realTotalPlan = filteredData.reduce((sum, it) => sum + it.klPhanBo, 0) || 1;
-
             let cumPlan = 0;
             let planPerc = [];
             let actualPerc = [];
@@ -489,12 +608,10 @@
                 cumPlan += planVol[i];
                 planPerc.push((cumPlan / realTotalPlan * 100).toFixed(1));
                 
-                // Actual progress = Total - Remaining
                 let cumActual = realTotalPlan - remainVol[i];
                 if (cumActual < 0) cumActual = 0;
                 
                 let curPerc = (cumActual / realTotalPlan * 100).toFixed(1);
-                // Prevent lines from dropping due to missing data in future months
                 if (i > 0 && parseFloat(curPerc) < parseFloat(actualPerc[i-1])) {
                     curPerc = actualPerc[i-1];
                     cumActual = realTotalPlan - remainVol[i-1];
@@ -505,46 +622,65 @@
                 actualVol.push(monthAct > 0 ? monthAct : 0);
             }
 
-            // Render S-Curve
             if (sCurveChartInst) sCurveChartInst.destroy();
             sCurveChartInst = new Chart(document.getElementById('sCurveChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: monthsLabel,
                     datasets: [
-                        { type: 'line', label: 'Plan % (Lũy kế)', data: planPerc, borderColor: '#c8102e', backgroundColor: '#c8102e', yAxisID: 'y1', tension: 0.3, borderWidth: 3 },
-                        { type: 'line', label: 'Actual % (Lũy kế)', data: actualPerc, borderColor: '#2563eb', backgroundColor: '#2563eb', yAxisID: 'y1', tension: 0.3, borderWidth: 3 },
-                        { type: 'bar', label: 'KH tháng (tấn)', data: planVol, backgroundColor: '#fde047', borderRadius: 4, yAxisID: 'y' },
-                        { type: 'bar', label: 'TT tháng (tấn)', data: actualVol, backgroundColor: '#fca5a5', borderRadius: 4, yAxisID: 'y' }
+                        { type: 'line', label: 'Plan %', data: planPerc, borderColor: '#e11d48', backgroundColor: '#e11d48', yAxisID: 'y1', tension: 0.4, borderWidth: 3, pointBackgroundColor: '#ffffff', pointBorderWidth: 2, pointRadius: 4 },
+                        { type: 'line', label: 'Actual %', data: actualPerc, borderColor: '#3b82f6', backgroundColor: '#3b82f6', yAxisID: 'y1', tension: 0.4, borderWidth: 3, pointBackgroundColor: '#ffffff', pointBorderWidth: 2, pointRadius: 4 },
+                        { type: 'bar', label: 'KH Tháng (tấn)', data: planVol, backgroundColor: '#fde047', borderRadius: 4, barPercentage: 0.6, yAxisID: 'y' },
+                        { type: 'bar', label: 'TT Tháng (tấn)', data: actualVol, backgroundColor: '#fecaca', borderRadius: 4, barPercentage: 0.6, yAxisID: 'y' }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', labels: { usePointStyle: true } } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { weight: '600' } } } },
                     scales: {
-                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Khối lượng (Tấn)' } },
-                        y1: { type: 'linear', display: true, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, title: { display: true, text: 'Tỷ lệ %' } }
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Khối lượng (Tấn)', font: { weight: '600' } }, border: { display: false }, grid: { color: '#f1f5f9' } },
+                        y1: { type: 'linear', display: true, position: 'right', min: 0, max: 100, title: { display: true, text: 'Tỷ lệ %', font: { weight: '600' } }, border: { display: false }, grid: { drawOnChartArea: false } },
+                        x: { border: { display: false }, grid: { display: false } }
                     }
                 }
             });
 
-            // Render Manpower Chart
             if (manpowerChartInst) manpowerChartInst.destroy();
-            manpowerChartInst = new Chart(document.getElementById('manpowerChart').getContext('2d'), {
+            
+            // Gradient for line chart
+            let ctx = document.getElementById('manpowerChart').getContext('2d');
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(59, 130, 246, 0.4)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+
+            manpowerChartInst = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: monthsLabel,
                     datasets: [{
                         label: 'Nhân lực (Người)',
                         data: manPower,
-                        borderColor: '#ea580c',
-                        backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                        borderColor: '#3b82f6',
+                        backgroundColor: gradient,
                         fill: true,
                         tension: 0.4,
-                        borderWidth: 3
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#3b82f6',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true, font: { weight: '600' } } } }, 
+                    scales: { 
+                        y: { beginAtZero: true, border: { display: false }, grid: { color: '#f1f5f9' } },
+                        x: { border: { display: false }, grid: { display: false } }
+                    } 
+                }
             });
         }
     </script>
