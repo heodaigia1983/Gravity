@@ -1,0 +1,1511 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Báo cáo Mail SBPQ</title>
+  <style>
+    :root {
+      --bg: #f0f2f5;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --teal: #0d9488;
+      --blue: #3b82f6;
+      --amber: #d97706;
+      --red: #dc2626;
+      --green: #16a34a;
+      --purple: #7c3aed;
+      --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(135deg, #f0f2f5 0%, #e8ecf4 50%, #f0eff5 100%);
+      background-attachment: fixed;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 0 30px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 3vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      min-width: 280px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      padding: 0 14px;
+      font-weight: 750;
+      transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: #b8c4d4;
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, #0d9488, #0891b2);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(13,148,136,0.3);
+    }
+
+    .btn.primary:hover {
+      box-shadow: 0 6px 20px rgba(13,148,136,0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn.danger {
+      border-color: #f3c3bd;
+      background: #fff5f4;
+      color: var(--red);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    .status-dot.ok {
+      background: var(--green);
+    }
+
+    .status-dot.bad {
+      background: var(--red);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .kpi {
+      min-height: 112px;
+      border: none;
+      border-radius: 14px;
+      background: var(--surface);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      animation: fadeSlideUp 0.5s ease both;
+    }
+
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 4px;
+      border-radius: 14px 0 0 14px;
+      background: linear-gradient(180deg, var(--teal), var(--blue));
+    }
+
+    .kpi:nth-child(2)::before { background: linear-gradient(180deg, var(--amber), #f59e0b); }
+    .kpi:nth-child(3)::before { background: linear-gradient(180deg, var(--blue), var(--purple)); }
+    .kpi:nth-child(4)::before { background: linear-gradient(180deg, var(--purple), #a855f7); }
+    .kpi:nth-child(5)::before { background: linear-gradient(180deg, var(--green), var(--teal)); }
+
+    .kpi:nth-child(1) { animation-delay: 0s; }
+    .kpi:nth-child(2) { animation-delay: 0.06s; }
+    .kpi:nth-child(3) { animation-delay: 0.12s; }
+    .kpi:nth-child(4) { animation-delay: 0.18s; }
+    .kpi:nth-child(5) { animation-delay: 0.24s; }
+
+    .kpi:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      margin-top: 12px;
+      font-size: 32px;
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .kpi-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .filters {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: minmax(240px, 1fr) 180px 180px 180px auto;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(22, 31, 46, 0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    .field {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 12px;
+      outline: none;
+    }
+
+    .field:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(8, 123, 117, 0.14);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    .feed {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mail-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      animation: fadeSlideUp 0.4s ease both;
+    }
+
+    .mail-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(13,148,136,0.3);
+    }
+
+    .mail-card.is-new {
+      border-left: 5px solid var(--teal);
+    }
+
+    .mail-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .mail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mail-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .mail-summary {
+      display: -webkit-box;
+      margin: 9px 0 0;
+      color: #465366;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      transition: transform 0.2s ease;
+    }
+
+    .tag:hover {
+      transform: scale(1.05);
+    }
+
+    .tag.high {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: var(--red);
+    }
+
+    .tag.medium {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      color: var(--amber);
+    }
+
+    .tag.low {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      color: var(--green);
+    }
+
+    .mail-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-self: center;
+      min-width: 112px;
+    }
+
+    .side {
+      position: sticky;
+      top: 84px;
+      display: grid;
+      gap: 12px;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .panel:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 6px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #e8eef5;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--teal);
+    }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      align-items: end;
+      min-height: 130px;
+    }
+
+    .month-col {
+      display: grid;
+      gap: 6px;
+      align-items: end;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .month-stick {
+      min-height: 4px;
+      border-radius: 6px 6px 0 0;
+      background: var(--blue);
+    }
+
+    .empty {
+      border: 1px dashed #bdc8d6;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.55);
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      background: rgba(15, 23, 42, 0.42);
+      padding: 24px;
+    }
+
+    .drawer.open {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .drawer-panel {
+      display: flex;
+      flex-direction: column;
+      width: min(760px, 100%);
+      max-height: calc(100vh - 48px);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 32px 80px rgba(15, 23, 42, 0.28);
+      overflow: hidden;
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      border-bottom: 1px solid var(--line);
+      padding: 22px;
+    }
+
+    .drawer-head h2 {
+      margin: 8px 0 0;
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .drawer-body {
+      overflow: auto;
+      padding: 22px;
+    }
+
+    .detail-section {
+      margin-top: 22px;
+    }
+
+    .detail-section:first-child {
+      margin-top: 0;
+    }
+
+    .detail-section h3 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .detail-text {
+      white-space: pre-wrap;
+    }
+
+    .file-list,
+    .link-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-item,
+    .link-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      padding: 10px 12px;
+      overflow-wrap: anywhere;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 140;
+      display: none;
+      max-width: 420px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      padding: 13px 15px;
+      box-shadow: 0 18px 45px rgba(22, 31, 46, 0.2);
+      font-weight: 750;
+    }
+
+    .toast.show {
+      display: block;
+    }
+
+    @media (max-width: 1180px) {
+      .kpis {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .filters {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        padding: 18px;
+      }
+
+      .topbar {
+        display: grid;
+      }
+
+      .top-actions {
+        justify-content: flex-start;
+        min-width: 0;
+      }
+
+      .kpis,
+      .side {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        position: static;
+        grid-template-columns: 1fr;
+      }
+
+      .mail-main {
+        grid-template-columns: 1fr;
+      }
+
+      .mail-actions {
+        flex-direction: row;
+        min-width: 0;
+      }
+
+      .drawer {
+        padding: 10px;
+      }
+
+      .drawer-panel {
+        max-height: calc(100vh - 20px);
+      }
+    }
+
+    /* Weather Widget */
+    .weather-widget { background: linear-gradient(135deg, #0f766e 0%, #134e4a 100%); color: #fff; border: none; }
+    .weather-widget h2 { color: #fff; }
+    .weather-location { font-size: 12px; opacity: 0.8; font-weight: 700; margin-top: 2px; }
+    .weather-current { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .weather-temp { font-size: 44px; font-weight: 850; line-height: 1; }
+    .weather-desc { font-size: 14px; font-weight: 700; opacity: 0.9; }
+    .weather-icon { font-size: 44px; line-height: 1; }
+    .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .weather-detail { background: rgba(255,255,255,0.12); border-radius: 8px; padding: 10px; font-size: 13px; font-weight: 700; }
+    .weather-detail-label { font-size: 11px; opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .weather-forecast { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
+    .forecast-day { text-align: center; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 4px; font-size: 12px; font-weight: 700; }
+    .forecast-day .fc-icon { font-size: 20px; margin: 4px 0; display: block; }
+    .forecast-day .fc-temp { font-size: 12px; font-weight: 800; }
+
+    /* Calendar */
+    .calendar-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .calendar-nav h2 { margin: 0; font-size: 15px; }
+    .cal-btn { width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-soft); color: var(--ink); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; font-weight: 800; transition: background 0.15s; }
+    .cal-btn:hover { background: #e8eef5; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+    .cal-hdr { font-size: 11px; font-weight: 800; color: var(--muted); padding: 4px 0; }
+    .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--muted); position: relative; transition: background 0.15s, transform 0.15s; }
+    .cal-day.active { color: var(--ink); }
+    .cal-day.has-mail { background: #e0f2f1; color: var(--teal); font-weight: 850; cursor: pointer; }
+    .cal-day.has-mail:hover { background: #b2dfdb; transform: scale(1.1); }
+    .cal-day.today { box-shadow: inset 0 0 0 2px var(--teal); }
+    .cal-dot { position: absolute; bottom: 2px; width: 5px; height: 5px; border-radius: 50%; background: var(--teal); }
+    .cal-day.hi-mail .cal-dot { background: var(--red); }
+
+    /* Chart */
+    .chart-box { position: relative; width: 100%; height: 210px; }
+
+    /* Footer */
+    .app-footer {
+      margin-top: 40px;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+    .app-footer .author-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .app-footer .author-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Phú Quốc Terminal 2</p>
+        <h1>Báo cáo mail dự án SBPQ</h1>
+        <p class="subtitle">Trang này đọc trực tiếp dữ liệu từ Google Sheet, tự phân loại hồ sơ, lọc theo tháng, mức ưu tiên và mở nhanh email gốc.</p>
+      </div>
+      <div class="top-actions">
+        <span class="status" id="syncStatus"><span class="status-dot" id="statusDot"></span><span id="statusText">Đang chuẩn bị</span></span>
+        <button class="btn primary" id="syncBtn" type="button">Đồng bộ</button>
+        <a class="btn" href="https://docs.google.com/spreadsheets/d/1gIOAMjsJTuEswpNB8vvnfo8V1VuA9mSc3aLOdUctSRw/edit?usp=sharing" target="_blank" rel="noreferrer">Mở Sheet</a>
+      </div>
+    </header>
+
+    <section class="kpis" aria-label="Chỉ số tổng quan">
+      <article class="kpi">
+        <div class="kpi-label">Tổng hồ sơ</div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-note" id="kpiTotalNote">Chưa tải dữ liệu</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Cần xử lý</div>
+        <div class="kpi-value" id="kpiAction">0</div>
+        <div class="kpi-note">Yêu cầu, cảnh báo, chậm tiến độ</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">BVTK / RFI</div>
+        <div class="kpi-value" id="kpiTech">0</div>
+        <div class="kpi-note">Bản vẽ, kỹ thuật, phản hồi thiết kế</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Tài liệu kèm</div>
+        <div class="kpi-value" id="kpiFiles">0</div>
+        <div class="kpi-note">File tách từ nội dung mail</div>
+      </article>
+      <article class="kpi">
+        <div class="kpi-label">Mới nhất</div>
+        <div class="kpi-value" id="kpiLatest">-</div>
+        <div class="kpi-note" id="kpiLatestNote">Ngày gửi gần nhất</div>
+      </article>
+    </section>
+
+    <section class="filters" aria-label="Bộ lọc">
+      <input class="field" id="searchInput" type="search" placeholder="Tìm số công văn, REV, RFI, nội dung..." autocomplete="off">
+      <select class="field" id="monthFilter">
+        <option value="all">Tất cả tháng</option>
+      </select>
+      <select class="field" id="categoryFilter">
+        <option value="all">Tất cả nhóm</option>
+      </select>
+      <select class="field" id="priorityFilter">
+        <option value="all">Tất cả mức</option>
+        <option value="Cao">Ưu tiên cao</option>
+        <option value="Trung bình">Ưu tiên vừa</option>
+        <option value="Thấp">Ưu tiên thấp</option>
+      </select>
+      <button class="btn" id="sortBtn" type="button">Mới nhất</button>
+    </section>
+
+    <div class="content">
+      <section>
+        <div class="feed" id="mailFeed">
+          <div class="empty">Đang lấy dữ liệu từ Google Sheet...</div>
+        </div>
+      </section>
+
+      <aside class="side" aria-label="Phân tích nhanh">
+        <section class="panel weather-widget" id="weatherPanel">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+            <div><h2>Thời tiết</h2><div class="weather-location">📍 Phú Quốc, Việt Nam</div></div>
+            <button class="cal-btn" id="refreshWeather" type="button" title="Làm mới" style="background:rgba(255,255,255,0.15);border:none;color:#fff">↻</button>
+          </div>
+          <div id="weatherContent"><div style="text-align:center;padding:20px;opacity:0.7">Đang tải thời tiết...</div></div>
+        </section>
+        <section class="panel">
+          <div class="calendar-nav">
+            <button class="cal-btn" id="calPrev" type="button">◀</button>
+            <h2 id="calTitle">--</h2>
+            <button class="cal-btn" id="calNext" type="button">▶</button>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+        <section class="panel">
+          <h2>Phân loại hồ sơ</h2>
+          <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+        </section>
+        <section class="panel">
+          <h2>Xu hướng mail</h2>
+          <div class="chart-box"><canvas id="trendChart"></canvas></div>
+        </section>
+        <section class="panel">
+          <h2>Cần chú ý</h2>
+          <div class="bar-list" id="attentionList"></div>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="app-footer">
+      <div>Thiết kế & phát triển bởi</div>
+      <div class="author-name">Lê Văn Thảo</div>
+      <div class="author-phone">📞 05.666668.47</div>
+    </footer>
+  </main>
+
+  <div class="drawer" id="detailDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-panel">
+      <div class="drawer-head">
+        <div>
+          <div class="mail-meta" id="drawerMeta"></div>
+          <h2 id="drawerTitle"></h2>
+        </div>
+        <button class="btn danger" id="closeDrawer" type="button">Đóng</button>
+      </div>
+      <div class="drawer-body">
+        <div class="tag-row" id="drawerTags"></div>
+        <section class="detail-section">
+          <h3>Nội dung</h3>
+          <div class="detail-text" id="drawerSummary"></div>
+        </section>
+        <section class="detail-section" id="drawerLinksWrap">
+          <h3>Link trong mail</h3>
+          <div class="link-list" id="drawerLinks"></div>
+        </section>
+        <section class="detail-section" id="drawerFilesWrap">
+          <h3>Tài liệu đính kèm</h3>
+          <div class="file-list" id="drawerFiles"></div>
+        </section>
+        <section class="detail-section">
+          <a class="btn primary" id="drawerGmail" href="#" target="_blank" rel="noreferrer">Mở Gmail gốc</a>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CONFIG = {
+      sheetId: "1gIOAMjsJTuEswpNB8vvnfo8V1VuA9mSc3aLOdUctSRw",
+      sheetName: "",
+      sourceUrl: "https://docs.google.com/spreadsheets/d/1gIOAMjsJTuEswpNB8vvnfo8V1VuA9mSc3aLOdUctSRw/edit?usp=sharing"
+    };
+
+    const state = {
+      mails: [],
+      filtered: [],
+      categories: [],
+      isDesc: true,
+      latestDate: null
+    };
+
+    const els = {
+      feed: document.getElementById("mailFeed"),
+      search: document.getElementById("searchInput"),
+      month: document.getElementById("monthFilter"),
+      category: document.getElementById("categoryFilter"),
+      priority: document.getElementById("priorityFilter"),
+      sort: document.getElementById("sortBtn"),
+      sync: document.getElementById("syncBtn"),
+      statusText: document.getElementById("statusText"),
+      statusDot: document.getElementById("statusDot"),
+      toast: document.getElementById("toast"),
+      drawer: document.getElementById("detailDrawer")
+    };
+
+    function buildGoogleSheetApiUrl(callbackName) {
+      const parts = [
+        `tqx=out:json;responseHandler:${callbackName}`,
+        "headers=1",
+        `tq=${encodeURIComponent("select *")}`
+      ];
+
+      if (CONFIG.sheetName) {
+        parts.push(`sheet=${encodeURIComponent(CONFIG.sheetName)}`);
+      }
+
+      return `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${parts.join("&")}`;
+    }
+
+    function loadGoogleSheetRows() {
+      return new Promise((resolve, reject) => {
+        const callbackName = `__sheetApi_${Date.now()}_${Math.round(Math.random() * 100000)}`;
+        const script = document.createElement("script");
+        const timer = window.setTimeout(() => {
+          cleanup();
+          reject(new Error("Không nhận được phản hồi từ Google Sheet."));
+        }, 18000);
+
+        function cleanup() {
+          window.clearTimeout(timer);
+          delete window[callbackName];
+          script.remove();
+        }
+
+        window[callbackName] = (payload) => {
+          cleanup();
+
+          if (!payload || payload.status === "error") {
+            const message = payload?.errors?.[0]?.detailed_message || "Google Sheet trả về lỗi.";
+            reject(new Error(message));
+            return;
+          }
+
+          resolve(visualizationTableToRows(payload.table));
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error("Không tải được API Google Sheet."));
+        };
+
+        script.src = buildGoogleSheetApiUrl(callbackName);
+        document.body.appendChild(script);
+      });
+    }
+
+    function visualizationTableToRows(table) {
+      const headers = (table.cols || []).map((col, index) => col.label || col.id || `Cột ${index + 1}`);
+      return (table.rows || [])
+        .map((row) => {
+          const item = {};
+          headers.forEach((header, index) => {
+            const cell = row.c?.[index];
+            item[header] = cell ? (cell.f ?? cell.v ?? "") : "";
+          });
+          return item;
+        })
+        .filter((row) => Object.values(row).some((value) => String(value).trim() !== ""));
+    }
+
+    function normalizeText(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[đĐ]/g, "d")
+        .toLowerCase()
+        .trim();
+    }
+
+    function normalizeHeader(value) {
+      return normalizeText(value).replace(/[^a-z0-9]/g, "");
+    }
+
+    function findColumn(headers, candidates) {
+      const normalized = headers.map(normalizeHeader);
+      return headers[normalized.findIndex((header) => candidates.some((candidate) => header.includes(candidate)))] || "";
+    }
+
+    function parseDate(value) {
+      const raw = String(value || "").trim();
+
+      if (!raw) return null;
+
+      const dateExpression = raw.match(/Date\((\d{4}),\s*(\d{1,2}),\s*(\d{1,2})/);
+      if (dateExpression) {
+        return new Date(Number(dateExpression[1]), Number(dateExpression[2]), Number(dateExpression[3]));
+      }
+
+      const viDate = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (viDate) {
+        return new Date(Number(viDate[3]), Number(viDate[2]) - 1, Number(viDate[1]));
+      }
+
+      const isoDate = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (isoDate) {
+        return new Date(Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3]));
+      }
+
+      const asDate = new Date(raw);
+      return Number.isNaN(asDate.getTime()) ? null : asDate;
+    }
+
+    function dateToIso(date) {
+      if (!date) return "";
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatDate(date) {
+      if (!date) return "-";
+      return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function extractAttachments(summary) {
+      const text = String(summary || "");
+      const match = text.match(/Đính kèm\s*:\s*([\s\S]*)$/i);
+      if (!match) {
+        return { cleaned: text.trim(), files: [] };
+      }
+
+      const files = match[1]
+        .split(",")
+        .map((file) => file.trim())
+        .filter(Boolean);
+
+      return {
+        cleaned: text.slice(0, match.index).trim(),
+        files
+      };
+    }
+
+    function extractLinks(summary) {
+      const links = [];
+      const source = String(summary || "");
+      const bracketLinks = source.matchAll(/<((?:https?:\/\/)[^>]+)>/g);
+      for (const match of bracketLinks) links.push(match[1]);
+
+      const bareLinks = source.matchAll(/(^|\s)((?:https?:\/\/)[^\s<>]+)/g);
+      for (const match of bareLinks) links.push(match[2]);
+
+      return [...new Set(links)];
+    }
+
+    function classifyCategory(textValue) {
+      const text = normalizeText(textValue);
+
+      if (/(an toan|atld|vsmt|ve sinh)/.test(text)) return "An toàn";
+      if (/(facade|mat dung|airlock|kinh)/.test(text)) return "Facade";
+      if (/(mai|roof|skylight|canopy|mang xoi|lop mai)/.test(text)) return "Mái";
+      if (/(ket cau|kct|thep|steel|betong|concrete|cot|dam|san deck|decking)/.test(text)) return "Kết cấu";
+      if (/(bvtk|ban ve|drawing|rev[0-9]|shop|rfi)/.test(text)) return "BVTK";
+      if (/(tien do|cham|ke hoach|san xuat|lap dung|van chuyen)/.test(text)) return "Tiến độ";
+      if (/(the|ksan|ho so|dang ky|luu tru|form mau)/.test(text)) return "Hồ sơ";
+      if (/(hop|bbh|thong bao|tb so)/.test(text)) return "Thông báo";
+      return "Khác";
+    }
+
+    function classifyStatus(textValue) {
+      const text = normalizeText(textValue);
+
+      if (/(canh bao|cham|phat|yeu cau|de nghi|phai|truoc ngay|deadline|khong dung)/.test(text)) return "Cần xử lý";
+      if (/(phan hoi|reply|re:|rfi)/.test(text)) return "Phản hồi";
+      if (/(bvtk|ban ve|rev[0-9]|drawing|shop)/.test(text)) return "Đã ban hành";
+      return "Theo dõi";
+    }
+
+    function classifyPriority(textValue, status) {
+      const text = normalizeText(textValue);
+
+      if (/(canh bao|cham|phat|deadline|khong dung|truoc ngay|rut ngan|vi pham)/.test(text)) return "Cao";
+      if (status === "Cần xử lý" || /(rfi|phan hoi|xem xet|bvtk|rev[0-9])/.test(text)) return "Trung bình";
+      return "Thấp";
+    }
+
+    function rowToMail(row, index, columns) {
+      const title = String(row[columns.title] || "").trim();
+      const rawSummary = String(row[columns.summary] || "").trim();
+      const attachments = extractAttachments(rawSummary);
+      const date = parseDate(row[columns.date]);
+      const link = String(row[columns.link] || "").trim();
+      const fullText = `${title}\n${rawSummary}`;
+      const category = classifyCategory(fullText);
+      const status = classifyStatus(fullText);
+      const priority = classifyPriority(fullText, status);
+      const id = String(row[columns.stt] || index + 1).trim();
+
+      return {
+        id,
+        title: title || "Không có tiêu đề",
+        summary: attachments.cleaned || rawSummary || "Không có nội dung tóm tắt.",
+        rawSummary,
+        date,
+        dateIso: dateToIso(date),
+        dateLabel: formatDate(date),
+        monthKey: date ? `${String(date.getMonth() + 1).padStart(2, "0")}/${date.getFullYear()}` : "Không rõ",
+        time: String(row[columns.time] || "").trim() || "--:--",
+        link,
+        files: attachments.files,
+        links: extractLinks(rawSummary),
+        category,
+        status,
+        priority,
+        searchText: normalizeText(`${id} ${title} ${rawSummary} ${category} ${status} ${priority} ${formatDate(date)}`)
+      };
+    }
+
+    function mapRows(rawRows) {
+      const headers = Object.keys(rawRows[0] || {});
+      const columns = {
+        stt: findColumn(headers, ["stt"]),
+        title: findColumn(headers, ["tieudemail", "tieude", "subject"]),
+        summary: findColumn(headers, ["noidungbanhanh", "tomtat", "noidung"]),
+        date: findColumn(headers, ["ngaygui", "ngay", "date"]),
+        time: findColumn(headers, ["giogui", "gio", "time"]),
+        link: findColumn(headers, ["linkemail", "link", "gmail"])
+      };
+
+      return rawRows
+        .map((row, index) => rowToMail(row, index, columns))
+        .filter((mail) => mail.title !== "Không có tiêu đề" || mail.summary !== "Không có nội dung tóm tắt.");
+    }
+
+    function setStatus(type, text) {
+      els.statusText.textContent = text;
+      els.statusDot.className = `status-dot ${type === "ok" ? "ok" : type === "bad" ? "bad" : ""}`;
+    }
+
+    function showToast(message) {
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      window.setTimeout(() => els.toast.classList.remove("show"), 3200);
+    }
+
+    async function syncLive() {
+      setStatus("wait", "Đang đồng bộ");
+      els.sync.disabled = true;
+
+      try {
+        const rawRows = await loadGoogleSheetRows();
+        state.mails = mapRows(rawRows).sort(compareByDateDesc);
+        state.latestDate = state.mails.reduce((latest, mail) => {
+          if (!mail.date) return latest;
+          return !latest || mail.date > latest ? mail.date : latest;
+        }, null);
+
+        hydrateFilters();
+        applyFilters();
+        setStatus("ok", `Live: ${state.mails.length} dòng`);
+        showToast(`Đã đồng bộ ${state.mails.length} hồ sơ từ Google Sheet.`);
+      } catch (error) {
+        setStatus("bad", "Lỗi kết nối");
+        els.feed.innerHTML = `<div class="empty">${escapeHtml(error.message)}<br>Hãy kiểm tra quyền xem của Google Sheet hoặc đăng nhập Google trong trình duyệt.</div>`;
+      } finally {
+        els.sync.disabled = false;
+      }
+    }
+
+    function compareByDateDesc(a, b) {
+      const dateA = a.date ? a.date.getTime() : 0;
+      const dateB = b.date ? b.date.getTime() : 0;
+      if (dateA !== dateB) return dateB - dateA;
+      return String(b.time).localeCompare(String(a.time));
+    }
+
+    function compareByDateAsc(a, b) {
+      return compareByDateDesc(b, a);
+    }
+
+    function hydrateFilters() {
+      const previousMonth = els.month.value;
+      const previousCategory = els.category.value;
+      const months = [...new Set(state.mails.map((mail) => mail.monthKey))].filter(Boolean).sort(sortMonthDesc);
+      const categories = [...new Set(state.mails.map((mail) => mail.category))].sort((a, b) => a.localeCompare(b, "vi"));
+      state.categories = categories;
+
+      els.month.innerHTML = `<option value="recent7">7 ngày gần nhất</option><option value="all">Tất cả tháng</option>${months.map((month) => `<option value="${escapeAttr(month)}">${escapeHtml(month)}</option>`).join("")}`;
+      els.category.innerHTML = `<option value="all">Tất cả nhóm</option>${categories.map((category) => `<option value="${escapeAttr(category)}">${escapeHtml(category)}</option>`).join("")}`;
+
+      if (previousMonth && previousMonth !== 'recent7' && months.includes(previousMonth)) {
+        els.month.value = previousMonth;
+      } else if (!previousMonth || previousMonth === 'recent7') {
+        els.month.value = 'recent7';
+      }
+      if (categories.includes(previousCategory)) els.category.value = previousCategory;
+    }
+
+    function sortMonthDesc(a, b) {
+      const [ma, ya] = a.split("/").map(Number);
+      const [mb, yb] = b.split("/").map(Number);
+      if (!Number.isFinite(ma) || !Number.isFinite(ya)) return 1;
+      if (!Number.isFinite(mb) || !Number.isFinite(yb)) return -1;
+      return yb * 12 + mb - (ya * 12 + ma);
+    }
+
+    function applyFilters() {
+      const query = normalizeText(els.search.value);
+      const month = els.month.value;
+      const category = els.category.value;
+      const priority = els.priority.value;
+
+      let cutoffDate = null;
+      if (month === 'recent7' && state.latestDate) {
+        cutoffDate = new Date(state.latestDate.getTime() - 7 * 86400000);
+      }
+
+      state.filtered = state.mails
+        .filter((mail) => !query || mail.searchText.includes(query))
+        .filter((mail) => {
+          if (month === 'recent7') return mail.date && cutoffDate && mail.date >= cutoffDate;
+          if (month === 'all') return true;
+          return mail.monthKey === month;
+        })
+        .filter((mail) => category === "all" || mail.category === category)
+        .filter((mail) => priority === "all" || mail.priority === priority)
+        .sort(state.isDesc ? compareByDateDesc : compareByDateAsc);
+
+      renderAll();
+    }
+
+    function renderAll() {
+      renderKpis();
+      renderFeed();
+      renderCategoryChart();
+      renderTrendChart();
+      renderCalendar();
+      renderAttention();
+    }
+
+    function renderKpis() {
+      const data = state.filtered;
+      const latest = data.reduce((result, mail) => {
+        if (!mail.date) return result;
+        return !result || mail.date > result ? mail.date : result;
+      }, null);
+
+      document.getElementById("kpiTotal").textContent = data.length;
+      document.getElementById("kpiTotalNote").textContent = state.mails.length ? `Đang hiển thị ${data.length}/${state.mails.length}` : "Chưa tải dữ liệu";
+      document.getElementById("kpiAction").textContent = data.filter((mail) => mail.status === "Cần xử lý").length;
+      document.getElementById("kpiTech").textContent = data.filter((mail) => /BVTK|Kết cấu|Mái|Facade/.test(mail.category) || /RFI|REV|BVTK/i.test(mail.title)).length;
+      document.getElementById("kpiFiles").textContent = data.reduce((sum, mail) => sum + mail.files.length, 0);
+      document.getElementById("kpiLatest").textContent = latest ? formatDate(latest).slice(0, 5) : "-";
+      document.getElementById("kpiLatestNote").textContent = latest ? formatDate(latest) : "Ngày gửi gần nhất";
+    }
+
+    function renderFeed() {
+      if (!state.filtered.length) {
+        els.feed.innerHTML = `<div class="empty">Không tìm thấy hồ sơ phù hợp với bộ lọc hiện tại.</div>`;
+        return;
+      }
+
+      els.feed.innerHTML = state.filtered.map((mail, idx) => renderMailCard(mail, idx)).join("");
+      els.feed.querySelectorAll("[data-open]").forEach((button) => {
+        button.addEventListener("click", () => openDrawer(button.dataset.open));
+      });
+    }
+
+    function renderMailCard(mail, idx) {
+      const newClass = isRecent(mail) ? " is-new" : "";
+      const gmailButton = mail.link ? `<a class="btn" href="${escapeAttr(mail.link)}" target="_blank" rel="noreferrer">Gmail</a>` : "";
+      const delay = Math.min(idx * 0.06, 0.6);
+
+      return `
+        <article class="mail-card${newClass}" style="animation-delay:${delay}s">
+          <div class="mail-main">
+            <div>
+              <div class="mail-meta">
+                <span>#${escapeHtml(mail.id)}</span>
+                <span>${escapeHtml(mail.dateLabel)}</span>
+                <span>${escapeHtml(mail.time)}</span>
+                <span>${escapeHtml(mail.status)}</span>
+              </div>
+              <h2 class="mail-title">${escapeHtml(mail.title)}</h2>
+              <p class="mail-summary">${escapeHtml(mail.summary).replace(/\n/g, " ")}</p>
+              <div class="tag-row">
+                <span class="tag">${escapeHtml(mail.category)}</span>
+                <span class="tag ${priorityClass(mail.priority)}">${escapeHtml(mail.priority)}</span>
+                ${mail.files.length ? `<span class="tag">${mail.files.length} file</span>` : ""}
+                ${isRecent(mail) ? `<span class="tag low">Mới</span>` : ""}
+              </div>
+            </div>
+            <div class="mail-actions">
+              <button class="btn primary" type="button" data-open="${escapeAttr(mail.id)}">Chi tiết</button>
+              ${gmailButton}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function isRecent(mail) {
+      if (!mail.date || !state.latestDate) return false;
+      const days = Math.round((state.latestDate.getTime() - mail.date.getTime()) / 86400000);
+      return days >= 0 && days <= 7;
+    }
+
+    function priorityClass(priority) {
+      if (priority === "Cao") return "high";
+      if (priority === "Trung bình") return "medium";
+      return "low";
+    }
+
+    let _catChart = null;
+    let _trendChart = null;
+
+    const chartColors = ['#087b75','#225ea8','#9a6500','#b42318','#067647','#6366f1','#db2777','#ea580c','#65a30d','#0891b2'];
+
+    function renderCategoryChart() {
+      const canvas = document.getElementById('categoryChart');
+      if (!canvas) return;
+      if (_catChart) { _catChart.destroy(); _catChart = null; }
+      const grouped = groupCount(state.filtered, 'category');
+      if (!grouped.length) { canvas.parentElement.innerHTML = '<div class="empty">Chưa có dữ liệu.</div>'; return; }
+      _catChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: grouped.map(g => g.name),
+          datasets: [{ data: grouped.map(g => g.count), backgroundColor: grouped.map((_, i) => chartColors[i % chartColors.length]), borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '58%',
+          plugins: { legend: { position: 'bottom', labels: { padding: 10, usePointStyle: true, pointStyleWidth: 10, font: { size: 11, weight: 700, family: 'Inter,sans-serif' } } } }
+        }
+      });
+    }
+
+    function renderTrendChart() {
+      const canvas = document.getElementById('trendChart');
+      if (!canvas) return;
+      if (_trendChart) { _trendChart.destroy(); _trendChart = null; }
+      const grouped = groupCount(state.filtered, 'monthKey').sort((a, b) => sortMonthDesc(b.name, a.name));
+      if (!grouped.length) { canvas.parentElement.innerHTML = '<div class="empty">Chưa có dữ liệu.</div>'; return; }
+      _trendChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: grouped.map(g => g.name),
+          datasets: [{ label: 'Số mail', data: grouped.map(g => g.count), borderColor: '#087b75', backgroundColor: 'rgba(8,123,117,0.10)', fill: true, tension: 0.4, pointBackgroundColor: '#087b75', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11, weight: 700 } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+            x: { ticks: { font: { size: 11, weight: 700 } }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderAttention() {
+      const high = state.filtered.filter((mail) => mail.priority === "Cao").slice(0, 5);
+
+      document.getElementById("attentionList").innerHTML = high.length
+        ? high.map((mail) => `
+            <button class="file-item" type="button" data-open="${escapeAttr(mail.id)}">
+              <strong>${escapeHtml(mail.dateLabel)}</strong><br>${escapeHtml(mail.title)}
+            </button>
+          `).join("")
+        : `<div class="file-item">Không có hồ sơ ưu tiên cao trong bộ lọc này.</div>`;
+
+      document.getElementById("attentionList").querySelectorAll("[data-open]").forEach((button) => {
+        button.addEventListener("click", () => openDrawer(button.dataset.open));
+      });
+    }
+
+    function groupCount(items, key) {
+      const map = new Map();
+      items.forEach((item) => {
+        const name = item[key] || "Không rõ";
+        map.set(name, (map.get(name) || 0) + 1);
+      });
+
+      return [...map.entries()]
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "vi"));
+    }
+
+    function renderBar(name, count, max) {
+      const width = Math.max(4, Math.round((count / max) * 100));
+      return `
+        <div>
+          <div class="bar-label"><span>${escapeHtml(name)}</span><span>${count}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+        </div>
+      `;
+    }
+
+    function openDrawer(id) {
+      const mail = state.mails.find((item) => String(item.id) === String(id));
+      if (!mail) return;
+
+      document.getElementById("drawerMeta").innerHTML = `
+        <span>#${escapeHtml(mail.id)}</span>
+        <span>${escapeHtml(mail.dateLabel)}</span>
+        <span>${escapeHtml(mail.time)}</span>
+        <span>${escapeHtml(mail.status)}</span>
+      `;
+      document.getElementById("drawerTitle").textContent = mail.title;
+      document.getElementById("drawerTags").innerHTML = `
+        <span class="tag">${escapeHtml(mail.category)}</span>
+        <span class="tag ${priorityClass(mail.priority)}">${escapeHtml(mail.priority)}</span>
+        ${mail.files.length ? `<span class="tag">${mail.files.length} tài liệu</span>` : ""}
+      `;
+      document.getElementById("drawerSummary").textContent = mail.summary;
+
+      const filesWrap = document.getElementById("drawerFilesWrap");
+      const files = document.getElementById("drawerFiles");
+      filesWrap.style.display = mail.files.length ? "" : "none";
+      files.innerHTML = mail.files.map((file) => `<div class="file-item">${escapeHtml(file)}</div>`).join("");
+
+      const linksWrap = document.getElementById("drawerLinksWrap");
+      const links = document.getElementById("drawerLinks");
+      linksWrap.style.display = mail.links.length ? "" : "none";
+      links.innerHTML = mail.links.map((link, index) => `<a class="link-item" href="${escapeAttr(link)}" target="_blank" rel="noreferrer">Link ${index + 1}: ${escapeHtml(link)}</a>`).join("");
+
+      const gmail = document.getElementById("drawerGmail");
+      gmail.href = mail.link || CONFIG.sourceUrl;
+      gmail.style.display = mail.link ? "inline-flex" : "none";
+
+      els.drawer.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeDrawer() {
+      els.drawer.classList.remove("open");
+      document.body.style.overflow = "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/`/g, "&#96;");
+    }
+
+    /* ── Calendar ── */
+    const calState = { year: new Date().getFullYear(), month: new Date().getMonth() };
+    const MONTH_NAMES = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+
+    function renderCalendar() {
+      const { year, month } = calState;
+      document.getElementById('calTitle').textContent = `${MONTH_NAMES[month]}, ${year}`;
+      const first = new Date(year, month, 1);
+      const total = new Date(year, month + 1, 0).getDate();
+      let dow = first.getDay(); dow = dow === 0 ? 6 : dow - 1;
+      const today = new Date();
+      const isNow = today.getFullYear() === year && today.getMonth() === month;
+      const todayD = today.getDate();
+      const counts = {};
+      state.filtered.forEach(m => { if (m.date && m.date.getFullYear() === year && m.date.getMonth() === month) { const d = m.date.getDate(); counts[d] = (counts[d]||0)+1; } });
+      let h = ['T2','T3','T4','T5','T6','T7','CN'].map(d => `<div class="cal-hdr">${d}</div>`).join('');
+      for (let i = 0; i < dow; i++) h += '<div class="cal-day"></div>';
+      for (let d = 1; d <= total; d++) {
+        const c = counts[d]||0;
+        const cls = ['cal-day','active']; if (c) cls.push('has-mail'); if (c >= 3) cls.push('hi-mail'); if (isNow && d === todayD) cls.push('today');
+        const dot = c ? '<span class="cal-dot"></span>' : '';
+        const attr = c ? `data-cal-day="${d}"` : '';
+        h += `<div class="${cls.join(' ')}" ${attr} title="${c?c+' mail':''}">${d}${dot}</div>`;
+      }
+      document.getElementById('calendarGrid').innerHTML = h;
+      document.getElementById('calendarGrid').querySelectorAll('[data-cal-day]').forEach(el => {
+        el.addEventListener('click', () => {
+          const day = parseInt(el.dataset.calDay);
+          const iso = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+          els.search.value = formatDate(new Date(iso));
+          applyFilters();
+        });
+      });
+    }
+
+    /* ── Weather (Open-Meteo, free, no API key) ── */
+    function weatherIcon(code) {
+      const m = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+      return m[code] || '🌤️';
+    }
+    function weatherDesc(code) {
+      const m = {0:'Trời quang',1:'Ít mây',2:'Có mây',3:'Nhiều mây',45:'Sương mù',48:'Sương mù',51:'Mưa phùn nhẹ',53:'Mưa phùn',55:'Mưa phùn nặng',61:'Mưa nhẹ',63:'Mưa vừa',65:'Mưa to',80:'Mưa rào nhẹ',81:'Mưa rào',82:'Mưa rào to',95:'Giông bão',96:'Giông mưa đá',99:'Giông mạnh'};
+      return m[code] || 'Không rõ';
+    }
+    async function fetchWeather() {
+      const el = document.getElementById('weatherContent');
+      try {
+        const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=10.22&longitude=103.96&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia%2FHo_Chi_Minh&forecast_days=5');
+        const d = await r.json();
+        const c = d.current;
+        const days = ['CN','T2','T3','T4','T5','T6','T7'];
+        let forecast = '';
+        for (let i = 0; i < 5; i++) {
+          const dt = new Date(d.daily.time[i]); const dn = days[dt.getDay()];
+          forecast += `<div class="forecast-day"><div>${dn}</div><span class="fc-icon">${weatherIcon(d.daily.weather_code[i])}</span><div class="fc-temp">${Math.round(d.daily.temperature_2m_min[i])}°-${Math.round(d.daily.temperature_2m_max[i])}°</div></div>`;
+        }
+        el.innerHTML = `
+          <div class="weather-current">
+            <div><div class="weather-temp">${Math.round(c.temperature_2m)}°C</div><div class="weather-desc">${weatherDesc(c.weather_code)}</div></div>
+            <div class="weather-icon">${weatherIcon(c.weather_code)}</div>
+          </div>
+          <div class="weather-details">
+            <div class="weather-detail"><div class="weather-detail-label">Độ ẩm</div>${c.relative_humidity_2m}%</div>
+            <div class="weather-detail"><div class="weather-detail-label">Gió</div>${Math.round(c.wind_speed_10m)} km/h</div>
+          </div>
+          <div class="weather-forecast">${forecast}</div>`;
+      } catch(e) {
+        el.innerHTML = '<div style="text-align:center;padding:16px;opacity:0.7">Không tải được thời tiết.</div>';
+      }
+    }
+
+    /* ── Event Listeners ── */
+    els.sync.addEventListener("click", syncLive);
+    els.search.addEventListener("input", applyFilters);
+    els.month.addEventListener("change", applyFilters);
+    els.category.addEventListener("change", applyFilters);
+    els.priority.addEventListener("change", applyFilters);
+    els.sort.addEventListener("click", () => {
+      state.isDesc = !state.isDesc;
+      els.sort.textContent = state.isDesc ? "Mới nhất" : "Cũ nhất";
+      applyFilters();
+    });
+    document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+    els.drawer.addEventListener("click", (event) => {
+      if (event.target === els.drawer) closeDrawer();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeDrawer();
+    });
+    document.getElementById('calPrev').addEventListener('click', () => { calState.month--; if (calState.month < 0) { calState.month = 11; calState.year--; } renderCalendar(); });
+    document.getElementById('calNext').addEventListener('click', () => { calState.month++; if (calState.month > 11) { calState.month = 0; calState.year++; } renderCalendar(); });
+    document.getElementById('refreshWeather').addEventListener('click', fetchWeather);
+
+    syncLive();
+    fetchWeather();
+    renderCalendar();
+  </script>
+</body>
+</html>

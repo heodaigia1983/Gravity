@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Báo cáo Sản lượng KCT-T2 | Phú Quốc</title>
+<meta name="description" content="Dashboard báo cáo sản lượng gia công sản xuất kết cấu thép mái nhà ga T2 - Cảng HKQT Phú Quốc">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f172a;--surface:#1e293b;--surface2:#334155;--glass:rgba(30,41,59,.85);--ink:#f1f5f9;--muted:#94a3b8;--line:#334155;--accent:#06b6d4;--accent2:#8b5cf6;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--teal:#14b8a6;--blue:#3b82f6;--r:12px;--shadow:0 4px 24px rgba(0,0,0,.3)}
+*{box-sizing:border-box;margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh}
+.app{max-width:1440px;margin:0 auto;padding:24px}
+/* Header */
+.header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 0 28px;flex-wrap:wrap}
+.header h1{font-size:clamp(22px,3vw,36px);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.eyebrow{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px}
+.subtitle{color:var(--muted);font-size:14px;margin-top:8px}
+.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);padding:0 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+.btn.primary{border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 16px rgba(6,182,212,.3)}
+.btn.primary:hover{box-shadow:0 6px 24px rgba(6,182,212,.45);transform:translateY(-2px)}
+.status{display:inline-flex;align-items:center;gap:8px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 14px;color:var(--muted);font-size:12px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:var(--surface);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;border:1px solid var(--line);transition:transform .25s,box-shadow .25s;animation:fadeUp .5s ease both}
+.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.kpi::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:var(--r) 0 0 var(--r)}
+.kpi:nth-child(1)::before{background:linear-gradient(180deg,var(--accent),var(--blue))}
+.kpi:nth-child(2)::before{background:linear-gradient(180deg,var(--green),var(--teal))}
+.kpi:nth-child(3)::before{background:linear-gradient(180deg,var(--amber),#f97316)}
+.kpi:nth-child(4)::before{background:linear-gradient(180deg,var(--red),#f43f5e)}
+.kpi:nth-child(5)::before{background:linear-gradient(180deg,var(--accent2),#a78bfa)}
+.kpi-label{color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.kpi-value{font-size:30px;font-weight:900;margin-top:8px;line-height:1}
+.kpi-note{color:var(--muted);font-size:12px;margin-top:8px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* Alerts */
+.alerts{margin-bottom:20px}
+.alert-title{font-size:15px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.alert-grid{display:grid;gap:10px}
+.alert-card{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;transition:all .25s;animation:fadeUp .4s ease both}
+.alert-card:hover{border-color:var(--red);transform:translateX(4px)}
+.alert-card.warn{border-left:4px solid var(--amber)}
+.alert-card.danger{border-left:4px solid var(--red)}
+.alert-icon{font-size:22px;flex-shrink:0}
+.alert-body{flex:1;min-width:0}
+.alert-body strong{font-size:14px;display:block}
+.alert-body span{color:var(--muted);font-size:12px}
+.alert-pct{font-size:18px;font-weight:900;flex-shrink:0}
+.alert-pct.low{color:var(--red)}.alert-pct.mid{color:var(--amber)}
+/* Charts */
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.chart-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;transition:box-shadow .25s}
+.chart-panel:hover{box-shadow:var(--shadow)}
+.chart-panel h2{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.chart-box{position:relative;height:260px}
+/* Tables */
+.zone-section{margin-bottom:20px;animation:fadeUp .5s ease both}
+.zone-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;cursor:pointer;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);transition:all .25s}
+.zone-header:hover{border-color:var(--accent);transform:translateX(4px)}
+.zone-header h2{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px}
+.zone-badge{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:20px;font-size:12px;font-weight:800}
+.zone-badge.green{background:rgba(34,197,94,.15);color:var(--green)}
+.zone-badge.amber{background:rgba(245,158,11,.15);color:var(--amber)}
+.zone-badge.red{background:rgba(239,68,68,.15);color:var(--red)}
+.zone-toggle{font-size:18px;transition:transform .3s}
+.zone-toggle.open{transform:rotate(180deg)}
+.zone-body{overflow:hidden;transition:max-height .4s ease}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.tbl th{background:var(--surface2);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:12px 14px;text-align:left;white-space:nowrap;position:sticky;top:0}
+.tbl td{padding:10px 14px;font-size:13px;font-weight:600;border-top:1px solid var(--line);white-space:nowrap}
+.tbl tr:hover td{background:rgba(6,182,212,.04)}
+.pbar{display:flex;align-items:center;gap:8px;min-width:140px}
+.pbar-track{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.pbar-text{font-size:12px;font-weight:800;min-width:44px;text-align:right}
+.eval-tag{display:inline-flex;height:24px;align-items:center;padding:0 8px;border-radius:6px;font-size:11px;font-weight:800}
+.eval-tag.pass{background:rgba(34,197,94,.15);color:var(--green)}
+.eval-tag.fail{background:rgba(239,68,68,.15);color:var(--red)}
+/* Footer */
+.app-footer{margin-top:40px;padding:24px 0;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px}
+.app-footer .name{font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:15px}
+/* Toast */
+.toast{position:fixed;right:24px;bottom:24px;z-index:100;background:var(--surface);border:1px solid var(--line);color:var(--ink);padding:14px 18px;border-radius:8px;font-weight:700;font-size:13px;box-shadow:0 16px 48px rgba(0,0,0,.4);transform:translateY(120%);transition:transform .35s ease;pointer-events:none}
+.toast.show{transform:translateY(0);pointer-events:auto}
+/* Responsive */
+@media(max-width:900px){.charts{grid-template-columns:1fr}.header{display:grid}}
+@media(max-width:640px){.app{padding:16px}.kpis{grid-template-columns:1fr 1fr}.tbl{font-size:12px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="header">
+<div>
+<p class="eyebrow">Phú Quốc International Airport — Terminal 2</p>
+<h1>Báo cáo Sản lượng KCT-T2</h1>
+<p class="subtitle">Dashboard theo dõi sản lượng gia công, sản xuất kết cấu thép mái nhà ga T2. Dữ liệu cập nhật trực tiếp từ Google Sheet.</p>
+</div>
+<div class="header-actions">
+<span class="status"><span class="dot" id="sDot"></span><span id="sText">Đang chuẩn bị</span></span>
+<button class="btn primary" id="syncBtn" type="button">⟳ Đồng bộ</button>
+<a class="btn" href="https://docs.google.com/spreadsheets/d/1d92P_H6J1oDFhxWqwPx7BXSuigxiSx-C/edit?usp=sharing" target="_blank" rel="noreferrer">📄 Mở Sheet</a>
+</div>
+</header>
+
+<section class="kpis" id="kpis"></section>
+<section class="alerts" id="alertsSection" style="display:none">
+<div class="alert-title">🚨 Cảnh báo Trậm trễ</div>
+<div class="alert-grid" id="alertGrid"></div>
+</section>
+<section class="charts">
+<div class="chart-panel"><h2>📊 Tổng quan Sản xuất</h2><div class="chart-box"><canvas id="overviewChart"></canvas></div></div>
+<div class="chart-panel"><h2>📈 Tiến độ theo Zone</h2><div class="chart-box"><canvas id="zoneChart"></canvas></div></div>
+</section>
+<section id="zoneContainer"></section>
+
+<footer class="app-footer">
+<div>Thiết kế & phát triển bởi</div>
+<div class="name">Lê Văn Thảo</div>
+<div style="margin-top:4px">📞 05.666668.47</div>
+</footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_ID='1d92P_H6J1oDFhxWqwPx7BXSuigxiSx-C';
+const GIDS={production:787531520,summary:1240635584};
+
+function setStatus(t,msg){document.getElementById('sText').textContent=msg;document.getElementById('sDot').className='dot'+(t==='ok'?' ok':t==='bad'?' bad':'')}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500)}
+
+function fetchSheet(gid){
+  return new Promise((res,rej)=>{
+    const cb='__cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+    const s=document.createElement('script');
+    const tm=setTimeout(()=>{cleanup();rej(new Error('Timeout'))},20000);
+    function cleanup(){clearTimeout(tm);delete window[cb];s.remove()}
+    window[cb]=p=>{cleanup();if(!p||p.status==='error'){rej(new Error('Sheet error'));return}res(parseTable(p.table))};
+    s.onerror=()=>{cleanup();rej(new Error('Network error'))};
+    s.src=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:${cb}&headers=0&gid=${gid}`;
+    document.body.appendChild(s);
+  });
+}
+function parseTable(t){
+  return(t.rows||[]).map(r=>(r.c||[]).map(c=>c?(c.f||String(c.v??'')):''));
+}
+function parseNum(s){if(typeof s==='number')return s;const v=String(s||'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');return parseFloat(v)||0}
+function parsePct(s){const m=String(s||'').match(/([\d,.]+)\s*%/);if(m)return parseFloat(m[1].replace(',','.'));return 0}
+
+/* Parse Zone data from Sheet 1 */
+function parseZones(rows){
+  const zones=[];let cur=null;
+  for(const r of rows){
+    const c0=String(r[0]||'').trim(),c1=String(r[1]||'').trim();
+    if(/^Zone/i.test(c1)){
+      cur={name:c1.replace(/[:：]/g,'').trim(),start:r[2]||'',end:r[3]||'',total:parseNum(r[4]),tasks:[]};
+      zones.push(cur);continue;
+    }
+    if(cur&&/^\d+$/.test(c0)){
+      const eval_day=String(r[8]||'').trim();
+      const eval_cum=String(r[11]||'').trim();
+      const pct=parsePct(r[12]);
+      cur.tasks.push({stt:c0,name:c1,start:r[2]||'',end:r[3]||'',total:parseNum(r[4]),target_day:parseNum(r[5]),plan:parseNum(r[6]),actual_day:parseNum(r[7]),eval_day,cumulative:parseNum(r[10]),eval_cum,pct});
+    }
+  }
+  return zones;
+}
+
+/* Parse Summary from Sheet 2 */
+function parseSummary(rows){
+  const tasks=[];const install=[];let section=0;
+  for(const r of rows){
+    const c0=String(r[0]||'').trim(),c1=String(r[1]||'').trim();
+    if(/Hạng mục.*Vị trí/i.test(c1)){section=1;continue}
+    if(section===0&&/^\d+$/.test(c0)&&c1){
+      tasks.push({name:c1,total:parseNum(r[2]),target:parseNum(r[7]),actual_day:parseNum(r[8]),cumulative:parseNum(r[9]),eval:String(r[10]||'').trim(),pct:parsePct(r[11])});
+    }
+    if(section===1&&/^\d+$/.test(c0)&&c1){
+      install.push({name:c1,pct:parsePct(r[10])});
+    }
+  }
+  return{tasks,install};
+}
+
+function pctColor(p){return p>=90?'var(--green)':p>=50?'var(--accent)':p>=25?'var(--amber)':'var(--red)'}
+function evalTag(v){const pass=/đạt/i.test(v)&&!/không/i.test(v);return`<span class="eval-tag ${pass?'pass':'fail'}">${v||'-'}</span>`}
+function progressBar(pct){const c=pctColor(pct);return`<div class="pbar"><div class="pbar-track"><div class="pbar-fill" style="width:${Math.min(pct,100)}%;background:${c}"></div></div><div class="pbar-text" style="color:${c}">${pct.toFixed(1)}%</div></div>`}
+function fmtNum(n){return n?n.toLocaleString('vi-VN'):'—'}
+
+function renderKpis(zones,summary){
+  const totalPlan=summary.tasks.reduce((s,t)=>s+t.total,0)||12382;
+  const totalDone=summary.tasks.reduce((s,t)=>s+t.cumulative,0);
+  const avgPct=summary.tasks.length?summary.tasks.reduce((s,t)=>s+t.pct,0)/summary.tasks.length:0;
+  const delayed=[];zones.forEach(z=>z.tasks.forEach(t=>{if(/không/i.test(t.eval_cum))delayed.push(t)}));
+  const zoneCount=zones.length;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi" style="animation-delay:0s"><div class="kpi-label">Tổng KL hợp đồng</div><div class="kpi-value">${fmtNum(totalPlan)}</div><div class="kpi-note">Tấn kết cấu thép</div></div>
+    <div class="kpi" style="animation-delay:.06s"><div class="kpi-label">Lũy kế hoàn thành</div><div class="kpi-value">${fmtNum(totalDone)}</div><div class="kpi-note">Tấn đã sản xuất</div></div>
+    <div class="kpi" style="animation-delay:.12s"><div class="kpi-label">Tiến độ TB</div><div class="kpi-value">${avgPct.toFixed(1)}%</div><div class="kpi-note">Trung bình 7 công đoạn</div></div>
+    <div class="kpi" style="animation-delay:.18s"><div class="kpi-label">Trậm trễ</div><div class="kpi-value" style="color:var(--red)">${delayed.length}</div><div class="kpi-note">Công đoạn không đạt</div></div>
+    <div class="kpi" style="animation-delay:.24s"><div class="kpi-label">Số Zone</div><div class="kpi-value">${zoneCount}</div><div class="kpi-note">Đang triển khai</div></div>`;
+}
+
+function renderAlerts(zones){
+  const items=[];
+  zones.forEach(z=>{
+    z.tasks.forEach(t=>{
+      if(t.pct<50&&/không/i.test(t.eval_cum)){
+        items.push({zone:z.name,task:t.name,pct:t.pct,cumulative:t.cumulative,total:t.total});
+      }
+    });
+  });
+  items.sort((a,b)=>a.pct-b.pct);
+  const sec=document.getElementById('alertsSection');
+  if(!items.length){sec.style.display='none';return}
+  sec.style.display='';
+  document.getElementById('alertGrid').innerHTML=items.slice(0,10).map((it,i)=>{
+    const cls=it.pct<20?'danger':'warn';
+    const icon=it.pct<20?'🔴':'🟡';
+    const pCls=it.pct<20?'low':'mid';
+    return`<div class="alert-card ${cls}" style="animation-delay:${i*.06}s"><span class="alert-icon">${icon}</span><div class="alert-body"><strong>${it.zone} — ${it.task}</strong><span>Lũy kế: ${fmtNum(it.cumulative)} / ${fmtNum(it.total)} tấn</span></div><div class="alert-pct ${pCls}">${it.pct.toFixed(1)}%</div></div>`;
+  }).join('');
+}
+
+let _oc=null,_zc=null;
+function renderCharts(summary,zones){
+  if(_oc){_oc.destroy();_oc=null}if(_zc){_zc.destroy();_zc=null}
+  const labels=summary.tasks.map(t=>t.name);
+  const targets=summary.tasks.map(t=>t.target);
+  const actuals=summary.tasks.map(t=>t.cumulative);
+  _oc=new Chart(document.getElementById('overviewChart'),{
+    type:'bar',data:{labels,datasets:[
+      {label:'Mục tiêu lũy kế',data:targets,backgroundColor:'rgba(6,182,212,.25)',borderColor:'var(--accent)',borderWidth:2,borderRadius:6},
+      {label:'Thực tế lũy kế',data:actuals,backgroundColor:'rgba(34,197,94,.3)',borderColor:'var(--green)',borderWidth:2,borderRadius:6}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11,weight:700,family:'Inter'}}}},scales:{x:{ticks:{color:'#94a3b8',font:{size:10,weight:700}},grid:{color:'rgba(255,255,255,.05)'}},y:{ticks:{color:'#94a3b8',font:{size:10,weight:700},callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},grid:{color:'rgba(255,255,255,.06)'}}}}
+  });
+  const zLabels=zones.map(z=>z.name);
+  const zData=zones.map(z=>{const ts=z.tasks;return ts.length?ts.reduce((s,t)=>s+t.pct,0)/ts.length:0});
+  const zColors=zData.map(v=>v>=80?'rgba(34,197,94,.7)':v>=50?'rgba(6,182,212,.7)':v>=25?'rgba(245,158,11,.7)':'rgba(239,68,68,.7)');
+  _zc=new Chart(document.getElementById('zoneChart'),{
+    type:'bar',data:{labels:zLabels,datasets:[{label:'Tiến độ TB (%)',data:zData,backgroundColor:zColors,borderRadius:8,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{max:100,ticks:{color:'#94a3b8',font:{size:10,weight:700},callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.06)'}},y:{ticks:{color:'#e2e8f0',font:{size:12,weight:800}},grid:{display:false}}}}
+  });
+}
+
+function renderZones(zones){
+  document.getElementById('zoneContainer').innerHTML=zones.map((z,zi)=>{
+    const avgPct=z.tasks.length?z.tasks.reduce((s,t)=>s+t.pct,0)/z.tasks.length:0;
+    const bcls=avgPct>=80?'green':avgPct>=40?'amber':'red';
+    return`<div class="zone-section" style="animation-delay:${zi*.08}s">
+      <div class="zone-header" onclick="toggleZone(this)">
+        <h2><span>${z.name}</span><span class="zone-badge ${bcls}">${avgPct.toFixed(1)}%</span></h2>
+        <span>KL: ${fmtNum(z.total)} tấn &nbsp;|&nbsp; ${z.start} → ${z.end}</span>
+        <span class="zone-toggle open">▼</span>
+      </div>
+      <div class="zone-body" style="max-height:800px">
+        <table class="tbl"><thead><tr>
+          <th>STT</th><th>Công đoạn</th><th>Bắt đầu</th><th>Kết thúc</th><th>KL HĐ</th><th>KL ngày</th><th>Lũy kế</th><th>Đánh giá</th><th>Tiến độ</th>
+        </tr></thead><tbody>
+          ${z.tasks.map(t=>`<tr>
+            <td>${t.stt}</td><td style="font-weight:800">${t.name}</td><td>${t.start}</td><td>${t.end}</td>
+            <td>${fmtNum(t.total)}</td><td>${fmtNum(t.actual_day)}</td><td>${fmtNum(t.cumulative)}</td>
+            <td>${evalTag(t.eval_cum)}</td><td>${progressBar(t.pct)}</td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleZone(el){
+  const body=el.nextElementSibling;
+  const icon=el.querySelector('.zone-toggle');
+  if(body.style.maxHeight&&body.style.maxHeight!=='0px'){body.style.maxHeight='0px';icon.classList.remove('open')}
+  else{body.style.maxHeight=body.scrollHeight+'px';icon.classList.add('open')}
+}
+
+async function sync(){
+  setStatus('wait','Đang đồng bộ...');
+  document.getElementById('syncBtn').disabled=true;
+  try{
+    const[prodRows,sumRows]=await Promise.all([fetchSheet(GIDS.production),fetchSheet(GIDS.summary)]);
+    const zones=parseZones(prodRows);
+    const summary=parseSummary(sumRows);
+    renderKpis(zones,summary);
+    renderAlerts(zones);
+    renderCharts(summary,zones);
+    renderZones(zones);
+    setStatus('ok',`Live · ${new Date().toLocaleTimeString('vi-VN')}`);
+    showToast(`Đã đồng bộ ${zones.length} zone thành công!`);
+  }catch(e){
+    setStatus('bad','Lỗi: '+e.message);
+    showToast('Lỗi kết nối. Kiểm tra quyền truy cập Google Sheet.');
+  }finally{document.getElementById('syncBtn').disabled=false}
+}
+
+document.getElementById('syncBtn').addEventListener('click',sync);
+sync();
+</script>
+</body>
+</html>
